@@ -1,0 +1,17 @@
+/home/andy/Documents/school/EECS494/p2/p2-proto-1/Temp/bin/Debug/Assembly-CSharp.dll.mdb
+/home/andy/Documents/school/EECS494/p2/p2-proto-1/Temp/bin/Debug/Assembly-CSharp.dll
+/home/andy/Documents/school/EECS494/p2/p2-proto-1/obj/Debug/Assembly-CSharp.dll
+/home/andy/Documents/school/EECS494/p2/p2-proto-1/obj/Debug/Assembly-CSharp.dll.mdb
+/home/andy/Documents/school/EECS494/p2/p2-proto-1/Temp/bin/Debug/UnityEngine.dll
+/home/andy/Documents/school/EECS494/p2/p2-proto-1/Temp/bin/Debug/UnityEditor.dll
+/home/andy/Documents/school/EECS494/p2/p2-proto-1/Temp/bin/Debug/UnityEngine.UI.dll
+/home/andy/Documents/school/EECS494/p2/p2-proto-1/Temp/bin/Debug/UnityEngine.Networking.dll
+/home/andy/Documents/school/EECS494/p2/p2-proto-1/Temp/bin/Debug/Unity.DataContract.dll
+/home/andy/Documents/school/EECS494/p2/p2-proto-1/Temp/bin/Debug/Mono.Cecil.dll
+/home/andy/Documents/school/EECS494/p2/p2-proto-1/Temp/bin/Debug/Unity.SerializationLogic.dll
+/home/andy/Documents/school/EECS494/p2/p2-proto-1/Temp/bin/Debug/ICSharpCode.NRefactory.dll
+/home/andy/Documents/school/EECS494/p2/p2-proto-1/Temp/bin/Debug/Unity.UNetWeaver.dll
+/home/andy/Documents/school/EECS494/p2/p2-proto-1/Temp/bin/Debug/Unity.UNetWeaver.dll.mdb
+/home/andy/Documents/school/EECS494/p2/p2-proto-1/Temp/bin/Debug/Unity.CecilTools.dll
+/home/andy/Documents/school/EECS494/p2/p2-proto-1/Temp/bin/Debug/Mono.Cecil.Pdb.dll
+/home/andy/Documents/school/EECS494/p2/p2-proto-1/Temp/bin/Debug/Mono.Cecil.Mdb.dll
