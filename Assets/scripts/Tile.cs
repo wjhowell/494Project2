@@ -97,7 +97,7 @@ public class Tile : MonoBehaviour  {
 	}
 
 	StateMachine animation_state;
-	ResourceType resource_type;
+	public ResourceType resource_type;
 
 	// upon instantiation?
 	void Awake() {

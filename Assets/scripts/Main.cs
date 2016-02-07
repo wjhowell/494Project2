@@ -9,6 +9,10 @@ public enum Owner {
 
 public class Main : MonoBehaviour {
 
+    public static Main M;
+    public Player redPlayer;
+    public Player bluePlayer;
+
 	public Tile TileSpacePrefab;
 
 	Tile[,] board;
@@ -30,11 +34,14 @@ public class Main : MonoBehaviour {
 	}
 
 	StateMachine gui_control;
-	Owner current_player = Owner.RED;
+	public Owner current_player = Owner.RED;
 
 	// Use this for initialization
 	void Start () {
-		SplayTiles (new Rect (0f, 0f, 10f, 10f));
+        M = this;
+        redPlayer = new Player();
+        bluePlayer = new Player();
+        SplayTiles (new Rect (0f, 0f, 10f, 10f));
 		// mark starting tile
 		board [1, 1].CurrentOwner = Owner.BLUE;
 		board [8, 6].CurrentOwner = Owner.RED;
@@ -81,11 +88,51 @@ public class Main : MonoBehaviour {
 		int y = board.GetLength(1) - Mathf.FloorToInt(loc.y/Tile.GlobalTileSize.y) - 1;
 		if (!board [x, y].IsSelectable)
 			return;
+        bool stolen = (board[x, y].CurrentOwner != current_player && board[x, y].CurrentOwner != Owner.NO_ONE);
 		board [x, y].CurrentOwner = current_player;
-		if (current_player == Owner.RED)
-			current_player = Owner.BLUE;
-		else if (current_player == Owner.BLUE)
-			current_player = Owner.RED;
+        if (current_player == Owner.RED)
+        {
+            current_player = Owner.BLUE;
+            redPlayer.numTilesOwned++;
+            if (stolen) bluePlayer.numTilesOwned--;
+            switch(board[x, y].resource_type)
+            {
+                case ResourceType.FIRE:
+                    redPlayer.FireOwned++;
+                    if (stolen) bluePlayer.FireOwned--;
+                    break;
+                case ResourceType.GRASS:
+                    redPlayer.GrassOwned++;
+                    if (stolen) bluePlayer.GrassOwned--;
+                    break;
+                case ResourceType.WATER:
+                    redPlayer.WaterOwned++;
+                    if (stolen) bluePlayer.WaterOwned--;
+                    break;
+            }
+
+        }
+        else if (current_player == Owner.BLUE)
+        {
+            current_player = Owner.RED;
+            bluePlayer.numTilesOwned++;
+            if (stolen) redPlayer.numTilesOwned--;
+            switch (board[x, y].resource_type)
+            {
+                case ResourceType.FIRE:
+                    bluePlayer.FireOwned++;
+                    if (stolen) redPlayer.FireOwned--;
+                    break;
+                case ResourceType.GRASS:
+                    bluePlayer.GrassOwned++;
+                    if (stolen) redPlayer.GrassOwned--;
+                    break;
+                case ResourceType.WATER:
+                    bluePlayer.WaterOwned++;
+                    if (stolen) redPlayer.WaterOwned--;
+                    break;
+            }
+        }
 		UpdateSelectableTiles ();
 	}
 }
