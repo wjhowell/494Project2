@@ -48,7 +48,8 @@ public class Main : MonoBehaviour {
 		UpdateSelectableTiles ();
 	}
 
-	void UpdateSelectableTiles() {
+	public void UpdateSelectableTiles() {
+		UI.U.timeRemaining = 30f;
 		// highlight all selectable tiles
 		for (int x = 0; x < board.GetLength (0); ++x) {
 			for (int y = 0; y < board.GetLength (1); ++y) {
@@ -86,53 +87,57 @@ public class Main : MonoBehaviour {
 	void HandlePressEvent(Vector2 loc) {
 		int x = Mathf.FloorToInt(loc.x/Tile.GlobalTileSize.x);
 		int y = board.GetLength(1) - Mathf.FloorToInt(loc.y/Tile.GlobalTileSize.y) - 1;
+		TakeTile (x, y);
+	}
+
+	void TakeTile(int x, int y){
 		if (!board [x, y].IsSelectable)
 			return;
-        bool stolen = (board[x, y].CurrentOwner != current_player && board[x, y].CurrentOwner != Owner.NO_ONE);
+		bool stolen = (board[x, y].CurrentOwner != current_player && board[x, y].CurrentOwner != Owner.NO_ONE);
 		board [x, y].CurrentOwner = current_player;
-        if (current_player == Owner.RED)
-        {
-            current_player = Owner.BLUE;
-            redPlayer.numTilesOwned++;
-            if (stolen) bluePlayer.numTilesOwned--;
-            switch(board[x, y].resource_type)
-            {
-                case ResourceType.FIRE:
-                    redPlayer.FireOwned++;
-                    if (stolen) bluePlayer.FireOwned--;
-                    break;
-                case ResourceType.GRASS:
-                    redPlayer.GrassOwned++;
-                    if (stolen) bluePlayer.GrassOwned--;
-                    break;
-                case ResourceType.WATER:
-                    redPlayer.WaterOwned++;
-                    if (stolen) bluePlayer.WaterOwned--;
-                    break;
-            }
+		if (current_player == Owner.RED)
+		{
+			current_player = Owner.BLUE;
+			redPlayer.numTilesOwned++;
+			if (stolen) bluePlayer.numTilesOwned--;
+			switch(board[x, y].resource_type)
+			{
+			case ResourceType.FIRE:
+				redPlayer.FireOwned++;
+				if (stolen) bluePlayer.FireOwned--;
+				break;
+			case ResourceType.GRASS:
+				redPlayer.GrassOwned++;
+				if (stolen) bluePlayer.GrassOwned--;
+				break;
+			case ResourceType.WATER:
+				redPlayer.WaterOwned++;
+				if (stolen) bluePlayer.WaterOwned--;
+				break;
+			}
 
-        }
-        else if (current_player == Owner.BLUE)
-        {
-            current_player = Owner.RED;
-            bluePlayer.numTilesOwned++;
-            if (stolen) redPlayer.numTilesOwned--;
-            switch (board[x, y].resource_type)
-            {
-                case ResourceType.FIRE:
-                    bluePlayer.FireOwned++;
-                    if (stolen) redPlayer.FireOwned--;
-                    break;
-                case ResourceType.GRASS:
-                    bluePlayer.GrassOwned++;
-                    if (stolen) redPlayer.GrassOwned--;
-                    break;
-                case ResourceType.WATER:
-                    bluePlayer.WaterOwned++;
-                    if (stolen) redPlayer.WaterOwned--;
-                    break;
-            }
-        }
+		}
+		else if (current_player == Owner.BLUE)
+		{
+			current_player = Owner.RED;
+			bluePlayer.numTilesOwned++;
+			if (stolen) redPlayer.numTilesOwned--;
+			switch (board[x, y].resource_type)
+			{
+			case ResourceType.FIRE:
+				bluePlayer.FireOwned++;
+				if (stolen) redPlayer.FireOwned--;
+				break;
+			case ResourceType.GRASS:
+				bluePlayer.GrassOwned++;
+				if (stolen) redPlayer.GrassOwned--;
+				break;
+			case ResourceType.WATER:
+				bluePlayer.WaterOwned++;
+				if (stolen) redPlayer.WaterOwned--;
+				break;
+			}
+		}
 		UpdateSelectableTiles ();
 	}
 }
