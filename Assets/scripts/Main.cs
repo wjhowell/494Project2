@@ -75,6 +75,28 @@ public class Main : MonoBehaviour {
 		}
 	}
 	
+	bool IsTileSelectable(int row, int col, Owner player_) {
+		if (row >= board.GetLength (1) || col >= board.GetLength (0)) {
+			if (col > 0) {
+				if (board [col - 1, row].CurrentOwner == player_)
+					return true;
+			}
+			if (col + 1 < board.GetLength (0)) {
+				if (board [col + 1, row].CurrentOwner == player_)
+					return true;
+			}
+			if (row > 0) {
+				if (board [col, row - 1].CurrentOwner == player_)
+					return true;
+			}
+			if (row + 1 < board.GetLength (1)) {
+				if (board [col, row + 1].CurrentOwner == player_)
+					return true;
+			}
+		}
+		return false;
+	}
+	
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetMouseButtonDown (0) || Input.GetMouseButtonDown (1)) {
