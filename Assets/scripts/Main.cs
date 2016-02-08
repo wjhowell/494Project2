@@ -85,8 +85,14 @@ public class Main : MonoBehaviour {
 	}
 
 	void HandlePressEvent(Vector2 loc) {
+		// assume: grid is at top-left
+		//         bottom left is the origin
+		loc.y = Screen.height - loc.y;
 		int x = Mathf.FloorToInt(loc.x/Tile.GlobalTileSize.x);
-		int y = board.GetLength(1) - Mathf.FloorToInt(loc.y/Tile.GlobalTileSize.y) - 1;
+		int y = Mathf.FloorToInt(loc.y/Tile.GlobalTileSize.y);
+		// next check bounds, ignore out of bounds input
+		if (x >= board.GetLength (0) || y >= board.GetLength (1))
+			return;
 		TakeTile (x, y);
 	}
 
