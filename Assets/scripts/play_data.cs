@@ -140,13 +140,13 @@ public class play_data : MonoBehaviour {
         {
             for (int q = 0; q < 3; q++)
             {
-                if (owner[p, q] == whosturn && tile_type[p,q]!=type.Empty)
+                if (owner[p, q] == whosturn && tile_type[p,q]!=type.Empty&& remaining[p, q]!=10)
                 {
                     remaining[p, q] --;
                     if (remaining[p, q] == 0)
                     {
-                        tile_type[p,q] = type.Empty;
                         player_income[whosturn, type2int(tile_type[p, q])]--;
+                        tile_type[p, q] = type.Empty;
                     }
                 }
             }
@@ -172,20 +172,21 @@ public class play_data : MonoBehaviour {
         moves_remain--;
         if (owner[current_select_row, current_select_col] == -1) //one-time claim
         {
-            owner[current_select_row, current_select_col] = whosturn;
-            tile_type[current_select_row, current_select_col] = type.Empty;
+            owner[current_select_row, current_select_col] = whosturn;  
+            remaining[current_select_row, current_select_col] = 0;
             switch (tile_type[current_select_row, current_select_col])
             {
                 case type.Fire:
-                    player_resource[whosturn, 0] += 10;
+                    player_resource[whosturn, 0] += 5;
                     break;
                 case type.Water:
-                    player_resource[whosturn, 1] += 10;
+                    player_resource[whosturn, 1] += 5;
                     break;
                 case type.Earth:
-                    player_resource[whosturn, 2] += 10;
+                    player_resource[whosturn, 2] += 5;
                     break;
             }
+            tile_type[current_select_row, current_select_col] = type.Empty;
         }
         else if (owner[current_select_row, current_select_col] == whosturn) //Fire Defense
         {
@@ -221,14 +222,17 @@ public class play_data : MonoBehaviour {
                 case type.Fire:
                     //player_0[0]=new coordinate(1,1);
                     player_resource[whosturn, 0]++;
+                    remaining[current_select_row, current_select_col]--;
                     player_income[whosturn, 0] ++;
                     break;
                 case type.Water:
                     player_resource[whosturn, 1]++;
+                    remaining[current_select_row, current_select_col]--;
                     player_income[whosturn, 1] ++;
                     break;
                 case type.Earth:
                     player_resource[whosturn, 2]++;
+                    remaining[current_select_row, current_select_col]--;
                     player_income[whosturn, 2] ++;
                     break;
             }
