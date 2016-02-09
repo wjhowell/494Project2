@@ -16,6 +16,7 @@ public struct coordinate {
 public class play_data : MonoBehaviour {
     public static play_data instance;
 
+	public tile tilePrefab;
     //map data
     public int[,] owner = new int[3,3];
     public type[,] tile_type = new type[3, 3];
@@ -49,6 +50,7 @@ public class play_data : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+		SetupBoard (14, 10);
         for(int p=0; p < 4; p++)
         {
             for(int q=0; q < 3; q++)
@@ -98,6 +100,27 @@ public class play_data : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         //print(owner[0,1]);
+	}
+
+	void SetupBoard(int cols, int rows) {
+		owner        = new int [cols, rows];
+		tile_type    = new type[cols, rows];
+		remaining    = new int [cols, rows];
+		defense_type = new type[cols, rows];
+		defense      = new int [cols, rows];
+		for (int x = 0; x != cols; ++x) {
+			for (int y = 0; y != rows; ++y) {
+				owner [x, y] = -1;
+				defense_type [x, y] = tile_type [x, y] = type.Empty;
+				remaining [x, y] = 0;
+				defense [x, y] = 0;
+				tile nt = Instantiate<tile>(tilePrefab);
+				nt.GetComponent<Transform> ().position = new Vector3 ((float)x, (float)y, 0f);
+				nt.col = x;
+				nt.row = y;
+				nt.owner = -1;
+			}
+		}
 	}
 
     public void next_turn()

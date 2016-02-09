@@ -1,186 +1,104 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
-public enum ResourceType {
-	WATER,
-	FIRE,
-	GRASS,
-	NONE
-}
-
-public enum StructureType {
-	NORMAL    , // capturable
-	FORTIFIED , // attackable
-	IMPASSABLE
-}
-
-public class Util {
-	public static Vector2 PointIsIn(Vector2 tap_point) {
-		return new Vector2(Mathf.Round(tap_point.x/Tile.GlobalTileSize.x), 
-			               Mathf.Round(tap_point.y/Tile.GlobalTileSize.y));
-	}
-
-	public static ResourceType GetRandomTileResource() {
-		switch (Random.Range (0, 2) % 3) {
-		case 0:
-			return ResourceType.FIRE;
-		case 1:
-			return ResourceType.GRASS;
-		case 2:
-			return ResourceType.WATER;
-		}
-		throw new UnityException ("Impossible branch");
-	}
-}
-
-/// <summary>
-/// A Tile is a basic element of the game's map. <br />
-/// It has a player owner, a resource type, a level, structure type
-/// </summary>
-public class Tile : MonoBehaviour  {
-
-	/// <summary>
-	/// The size of every tile on the map.
-	/// </summary>
-	static public Vector2 GlobalTileSize = new Vector2(50f, 50f);
-
-	static public Vector2 GlobalPadding = new Vector2 (2f, 2f);
-
-	static public float GlobalResourceProb = 0.1f;
-
-	/// <summary>
-	/// Converts owner enum into its flag color.
-	/// </summary>
-	/// <returns>color of represent owner's flag</returns>
-	/// <param name="o">Oh...</param>
-	public static Color ConvertOwnerToColor(Owner o) {
-		switch (o) {
-		case Owner.BLUE:
-			return new Color (0f, 0f, 1f);
-		case Owner.RED:
-			return new Color (1f, 0f, 0f);
-		case Owner.NO_ONE:
-			return new Color (1f, 1f, 1f);
-		}
-		throw new UnityException ("Invalid owner, cannot convert to color!");
-	}
-
-	Owner current_owner = Owner.NO_ONE;
-	public Owner CurrentOwner {
-		get { return current_owner; }
-		set {
-			current_owner = value;
-			color = ConvertOwnerToColor (current_owner);
-		}
-	}
-
-	public Vector2 tile_location;
-	public Vector2 PixelLocation {
-		get { return new Vector2 (tile_location.x*GlobalTileSize.x, tile_location.y*GlobalTileSize.y); }
-		set { tile_location = new Vector2 (Mathf.Round(value.x/GlobalTileSize.x), Mathf.Round(value.y/GlobalTileSize.y)); }
-	}
-
-	public Color color = new Color (1f, 1f, 1f);
-
-	bool is_selectable = false;
-	public bool IsSelectable {
-		get { return is_selectable; }
-		set {
-			is_selectable = value;
-			if (is_selectable && animation_state != null) {
-				animation_state.ChangeState (new TileFlashAnimation (this));
-			} else {
-				animation_state.Reset ();
-				color = ConvertOwnerToColor (current_owner);
-			}
-		}
-	}
-
-	StateMachine animation_state;
-	public ResourceType resource_type;
-
-	// upon instantiation?
-	void Awake() {
-		animation_state = new StateMachine ();
-		if (Random.value < GlobalResourceProb)
-			resource_type = Util.GetRandomTileResource ();
-		else
-			resource_type = ResourceType.NONE;
-	}
+public class tile : MonoBehaviour {
+    tile instance;
+    public int row;
+    public int col;
+    public int owner;
+    public type tile_type;
+    public int remaining;
 
 	// Use this for initialization
 	void Start () {
-		
-	}
-
+        instance = this;
+        row = (int)transform.position.y;
+        col = (int)transform.position.x;
+        
+    }
+	
 	// Update is called once per frame
 	void Update () {
-		animation_state.Update ();
+        owner = play_data.instance.owner[row, col];
+        tile_type = play_data.instance.tile_type[row, col];
+
+        //string sprites = play_data.instance.tile_type[row, col].ToString() + "_" + play_data.instance.owner[row, col];
+        switch (tile_type)
+        {
+            case type.Empty:
+                #region empty tile
+                if (owner==-1)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.empty[4];
+                else if (owner == 0)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.empty[0];
+                else if (owner == 1)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.empty[1];
+                else if (owner == 2)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.empty[2];
+                else if (owner == 3)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.empty[3];
+                #endregion
+                break;
+            case type.Fire:
+                #region fire tile
+                if (owner == -1)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.fire[4];
+                else if (owner == 0)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.fire[0];
+                else if (owner == 1)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.fire[1];
+                else if (owner == 2)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.fire[2];
+                else if (owner == 3)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.fire[3];
+                #endregion
+                break;
+            case type.Water:
+                #region water tile
+                if (owner == -1)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.water[4];
+                else if (owner == 0)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.water[0];
+                else if (owner == 1)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.water[1];
+                else if (owner == 2)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.water[2];
+                else if (owner == 3)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.water[3];
+                #endregion
+                break;
+            case type.Earth:
+                #region earth tile
+                if (owner == -1)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.earth[4];
+                else if (owner == 0)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.earth[0];
+                else if (owner == 1)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.earth[1];
+                else if (owner == 2)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.earth[2];
+                else if (owner == 3)
+                    GetComponent<SpriteRenderer>().sprite = play_data.instance.earth[3];
+                #endregion
+                break;
+        }
+    }
+
+	void OnMouseOver(){
+		Color temp = GetComponent<SpriteRenderer> ().color;
+		temp.a = .8f;
+		GetComponent<SpriteRenderer> ().color = temp;
 	}
 
-	// IQpierce on drawing quads
-	// http://forum.unity3d.com/threads/draw-a-simple-rectangle-filled-with-a-color.116348/
-	private static Texture2D s_rect_texture;
-	private static GUIStyle s_rect_style;
-
-	// tile rendering code
-	void OnGUI () {
-		
-		Rect rect_bounds = new Rect (PixelLocation.x, PixelLocation.y, 
-			GlobalTileSize.x - GlobalPadding.x, GlobalTileSize.y - GlobalPadding.y);
-		if (s_rect_texture == null) {
-			s_rect_texture = new Texture2D( 1, 1 );
-		}
-
-		if (s_rect_style == null) {
-			s_rect_style = new GUIStyle();
-		}
-
-		s_rect_texture.SetPixel(0, 0, color);
-		s_rect_texture.Apply();
-
-		s_rect_style.normal.background = s_rect_texture;
-
-		GUI.Box(rect_bounds, GUIContent.none, s_rect_style);
-		switch (resource_type) {
-		case ResourceType.FIRE:
-			GUI.TextArea (rect_bounds, "F");
-			break;
-		case ResourceType.GRASS:
-			GUI.TextArea (rect_bounds, "G");
-			break;
-		case ResourceType.WATER:
-			GUI.TextArea (rect_bounds, "W");
-			break;
-		}
-	}
-}
-
-public class TileFlashAnimation : State {
-	float select_flash_interval = 1f;
-	float select_flash_delay = 0f;
-	bool select_flash_up = false;
-	Tile parent_tile;
-
-	public TileFlashAnimation(Tile parent_) {
-		parent_tile = parent_;
+	void OnMouseExit(){
+		Color temp = GetComponent<SpriteRenderer> ().color;
+		temp.a = 1f;
+		GetComponent<SpriteRenderer> ().color = temp;
 	}
 
-	public override void OnUpdate (float time_delta_fraction) {
-		select_flash_delay -= Time.deltaTime;
-		float multi = (select_flash_delay / select_flash_interval);
-		if (select_flash_up)
-			multi = 1f - multi;
-		multi = 0.5f + multi * 0.5f;
-		parent_tile.color = Tile.ConvertOwnerToColor (parent_tile.CurrentOwner);
-		parent_tile.color.b *= multi;
-		parent_tile.color.r *= multi;
-		parent_tile.color.g *= multi;
-
-		if (select_flash_delay < 0f) {
-			select_flash_up = !select_flash_up;
-			select_flash_delay = select_flash_interval;
-		}
-	}
-
+    void OnMouseDown()
+    {
+        play_data.instance.current_select_row = row;
+        play_data.instance.current_select_col = col;
+    }
 }
