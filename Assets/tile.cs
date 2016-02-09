@@ -23,7 +23,6 @@ public class tile : MonoBehaviour {
         tile_type = play_data.instance.tile_type[row, col];
 
         //string sprites = play_data.instance.tile_type[row, col].ToString() + "_" + play_data.instance.owner[row, col];
-        //etComponent<SpriteRenderer>().sprite=play_data
         switch (tile_type)
         {
             case type.Empty:

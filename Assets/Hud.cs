@@ -18,7 +18,10 @@ public class Hud : MonoBehaviour {
     public Button option_1;
     public Button option_2;
     public Button end_turn;
-    
+
+    public Camera guicame;
+
+    Color purple = new Color(0.453f, 0.270f, 0.809f);
 
     // Use this for initialization
     void Start () {
@@ -30,6 +33,22 @@ public class Hud : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        switch (play_data.instance.whosturn)
+        {
+            case 0:
+                guicame.backgroundColor = Color.green;
+                break;
+            case 1:
+                guicame.backgroundColor=purple;
+                break;
+            case 2:
+                guicame.backgroundColor = Color.red;
+                break;
+            case 3:
+                guicame.backgroundColor = Color.yellow;
+                break;
+        }
+        
         location_text.text = "Row: " + play_data.instance.current_select_row.ToString() + "      Column: " + play_data.instance.current_select_col.ToString();
         if (play_data.instance.owner[play_data.instance.current_select_row, play_data.instance.current_select_col]==-1)
         {
@@ -52,71 +71,89 @@ public class Hud : MonoBehaviour {
         }
 
         info_text.fontSize = 8;
-        info_text.text = "Player_" + play_data.instance.whosturn.ToString() + " 's turn"
+        info_text.text = "Player_" + play_data.instance.whosturn.ToString() + " 's turn   " + play_data.instance.moves_remain.ToString()
                         + "\nFire: " + play_data.instance.player_resource[play_data.instance.whosturn, 0].ToString()+"/"+ play_data.instance.player_income[play_data.instance.whosturn, 0].ToString()
                         + "\nWater: " + play_data.instance.player_resource[play_data.instance.whosturn, 1].ToString() + "/" + play_data.instance.player_income[play_data.instance.whosturn, 1].ToString()
                         + "\nEarth: " + play_data.instance.player_resource[play_data.instance.whosturn, 2].ToString() + "/" + play_data.instance.player_income[play_data.instance.whosturn, 2].ToString();
 
-        //need path_find function to determine if it's accessible
-        if (play_data.instance.owner[play_data.instance.current_select_row, play_data.instance.current_select_col] == -1) //if the tile has no owner
+        if (play_data.instance.moves_remain!=0)
         {
-            if (play_data.instance.tile_type[play_data.instance.current_select_row, play_data.instance.current_select_col]==type.Empty)
+            #region if you still have move
+            //need path_find function to determine if it's accessible
+            if (play_data.instance.owner[play_data.instance.current_select_row, play_data.instance.current_select_col] == -1) //if the tile has no owner
             {
-                option_0_text.text = "Claim";
-                option_1_text.text = "";
-                option_2_text.text = "";
-                option_0.interactable = true;
-                option_1.interactable = false;
-                option_2.interactable = false;
+                if (play_data.instance.tile_type[play_data.instance.current_select_row, play_data.instance.current_select_col] == type.Empty)
+                {
+                    option_0_text.text = "Claim";
+                    option_1_text.text = "";
+                    option_2_text.text = "";
+                    option_0.interactable = true;
+                    option_1.interactable = false;
+                    option_2.interactable = false;
+                }
+                else
+                {
+                    option_0_text.text = "Claim one-time";
+                    option_1_text.text = "Claim long-term";
+                    option_2_text.text = "";
+                    option_0.interactable = true;
+                    option_1.interactable = true;
+                    option_2.interactable = false;
+                }
+
             }
-            else
+            else if (play_data.instance.owner[play_data.instance.current_select_row, play_data.instance.current_select_col] == play_data.instance.whosturn)// Defense (tile's owner = player of current turn)
             {
-                option_0_text.text = "Claim one-time";
-                option_1_text.text = "Claim long-term";
-                option_2_text.text = "";
+                option_0_text.text = "Fire Defend";
+                option_1_text.text = "Water Defend";
+                option_2_text.text = "Earth Defend";
+                switch (play_data.instance.defense_type[play_data.instance.current_select_row, play_data.instance.current_select_col])
+                {
+                    case type.Fire:
+                        option_0.interactable = true;
+                        option_1.interactable = false;
+                        option_2.interactable = false;
+                        break;
+                    case type.Water:
+                        option_0.interactable = false;
+                        option_1.interactable = true;
+                        option_2.interactable = false;
+                        break;
+                    case type.Earth:
+                        option_0.interactable = false;
+                        option_1.interactable = false;
+                        option_2.interactable = true;
+                        break;
+                    case type.Empty:
+                        option_0.interactable = true;
+                        option_1.interactable = true;
+                        option_2.interactable = true;
+                        break;
+                }
+            }
+            else //Attack(tile's owner != player of current turn)
+            {
+                option_0_text.text = "Fire Attack";
+                option_1_text.text = "Water Attack";
+                option_2_text.text = "Earth Attack";
                 option_0.interactable = true;
                 option_1.interactable = true;
-                option_2.interactable = false;
+                option_2.interactable = true;
             }
-            
+            #endregion
         }
-        else if (play_data.instance.owner[play_data.instance.current_select_row, play_data.instance.current_select_col] == play_data.instance.whosturn)// Defense (tile's owner = player of current turn)
+        else
         {
-            option_0_text.text = "Fire Defend";
-            option_1_text.text = "Water Defend";
-            option_2_text.text = "Earth Defend";
-            switch(play_data.instance.defense_type[play_data.instance.current_select_row, play_data.instance.current_select_col])
-            {
-                case type.Fire:
-                    option_0.interactable = true;
-                    option_1.interactable = false;
-                    option_2.interactable = false;
-                    break;
-                case type.Water:
-                    option_0.interactable = false;
-                    option_1.interactable = true;
-                    option_2.interactable = false;
-                    break;
-                case type.Earth:
-                    option_0.interactable = false;
-                    option_1.interactable = false;
-                    option_2.interactable = true;
-                    break;
-                case type.Empty:
-                    option_0.interactable = true;
-                    option_1.interactable = true;
-                    option_2.interactable = true;
-                    break;
-            }
+            #region if you don't have move left
+            option_0_text.text = "";
+            option_1_text.text = "";
+            option_2_text.text = "";
+            option_0.interactable = false;
+            option_1.interactable = false;
+            option_2.interactable = false;
+            #endregion
         }
-        else //Attack(tile's owner != player of current turn)
-        {
-            option_0_text.text = "Fire Attack";
-            option_1_text.text = "Water Attack";
-            option_2_text.text = "Earth Attack";
-            option_0.interactable = true;
-            option_1.interactable = true;
-            option_2.interactable = true;
-        }
+
+
     }
 }

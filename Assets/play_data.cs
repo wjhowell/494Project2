@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public enum type { Fire, Water, Earth, Empty };
 public struct coordinate {
-    int x;
-    int y;
+    public int x;
+    public int y;
     public coordinate(int a, int b)
     {
         x = a;
@@ -28,6 +28,9 @@ public class play_data : MonoBehaviour {
     //4 player data in order of Fire, Water, Earth
     public int[,] player_resource = new int[4,3];
     public int[,] player_income = new int[4, 3];
+    //public List<coordinate>[] player_property = new List<coordinate>[4];
+    //turn moves
+    public int moves_remain;
     //map sprites
     public Sprite[] empty;
     public Sprite[] fire;
@@ -39,7 +42,7 @@ public class play_data : MonoBehaviour {
     //public coordinate[] player_2;
     //public coordinate[] player_3;
 
-    //public List<coordinate>[] player_mine = new List<coordinate>[4];
+    public List<coordinate>[] player_mine = new List<coordinate>[4];
 
     public int whosturn;
 
@@ -68,6 +71,7 @@ public class play_data : MonoBehaviour {
 
 
 
+        moves_remain = 2;
         whosturn = 0;
         instance = this;
         owner[1,0] = 0;
@@ -79,11 +83,16 @@ public class play_data : MonoBehaviour {
         tile_type[1, 2] = type.Earth;
         tile_type[0, 1] = type.Empty;
         tile_type[2, 1] = type.Empty;
-        remaining[1, 0] = 10;
-        remaining[1, 1] = 10;
-        remaining[1, 2] = 10;
-        remaining[0, 1] = 10;
-        remaining[2, 1] = 10;
+        for (int p = 0; p < 3; p++)
+        {
+            for (int q = 0; q < 3; q++)
+            {
+                if (tile_type[p, q]!=type.Empty)
+                {
+                    remaining[p, q] = 10;
+                }
+            }
+        }
     }
 	
 	// Update is called once per frame
@@ -94,6 +103,7 @@ public class play_data : MonoBehaviour {
     public void next_turn()
     {
         whosturn++;
+        moves_remain = 2;
         if (whosturn == 4)
         {
             whosturn = 0;
@@ -103,13 +113,40 @@ public class play_data : MonoBehaviour {
         {
                 player_resource[whosturn, p] += player_income[whosturn, p];
         }
-        GameObject panel = GameObject.Find("Panel2");
-        
+        for (int p = 0; p < 3; p++)
+        {
+            for (int q = 0; q < 3; q++)
+            {
+                if (owner[p, q] == whosturn && tile_type[p,q]!=type.Empty)
+                {
+                    remaining[p, q] --;
+                    if (remaining[p, q] == 0)
+                    {
+                        tile_type[p,q] = type.Empty;
+                        player_income[whosturn, type2int(tile_type[p, q])]--;
+                    }
+                }
+            }
+        }
+        //for(int q = 0; q < player_property[whosturn].Count; q++)
+        //{
+        //    remaining[
+        //        player_property[whosturn][q].x, player_property[whosturn][q].y
+        //        ]--;
+        //    if(remaining[player_property[whosturn][q].x, player_property[whosturn][q].y] == 0)
+        //    {
+        //        tile_type[player_property[whosturn][q].x, player_property[whosturn][q].y] = type.Empty;
+        //        player_property[whosturn].RemoveAt(q);
+        //    }
+        //}
+        //GameObject panel = GameObject.Find("Panel2");
+
 
     }
 
     public void option_0()
     {
+        moves_remain--;
         if (owner[current_select_row, current_select_col] == -1) //one-time claim
         {
             owner[current_select_row, current_select_col] = whosturn;
@@ -131,23 +168,31 @@ public class play_data : MonoBehaviour {
         {
             defense_type[current_select_row, current_select_col] = type.Fire;
             defense[current_select_row, current_select_col]++;
-            player_resource[whosturn, 0] -= 10;
+            player_resource[whosturn, 0] -= 5;
         }
         else //Fire attack
         {
             defense[current_select_row, current_select_col]--;
-            player_resource[whosturn, 0] -= 10;
+            player_resource[whosturn, 0] -= 5;
             if (defense[current_select_row, current_select_col]==0)
             {
                 defense_type[current_select_row, current_select_col] = type.Empty;
+            }
+            if (defense[current_select_row, current_select_col] < 0)
+            {
+                defense[current_select_row, current_select_col] = 0;
+                owner[current_select_row, current_select_col] = whosturn;
             }
         }
     }
     public void option_1()
     {
+        moves_remain--;
         if (owner[current_select_row, current_select_col] == -1) //long-term claim
         {
             owner[current_select_row, current_select_col] = whosturn;
+            //coordinate temp = new coordinate(current_select_row, current_select_col);
+            //player_property[whosturn].Add(temp);
             switch (tile_type[current_select_row, current_select_col])
             {
                 case type.Fire:
@@ -170,34 +215,58 @@ public class play_data : MonoBehaviour {
         {
             defense_type[current_select_row, current_select_col] = type.Water;
             defense[current_select_row, current_select_col]++;
-            player_resource[whosturn, 1] -= 10;
+            player_resource[whosturn, 1] -= 5;
         }
         else //Water attack
         { 
             defense[current_select_row, current_select_col]--;
-            player_resource[whosturn, 1] -= 10;
+            player_resource[whosturn, 1] -= 5;
             if (defense[current_select_row, current_select_col] == 0)
             {
                 defense_type[current_select_row, current_select_col] = type.Empty;
+            }
+            if (defense[current_select_row, current_select_col] < 0)
+            {
+                defense[current_select_row, current_select_col] = 0;
+                owner[current_select_row, current_select_col] = whosturn;
             }
         }
     }
     public void option_2()
     {
+        moves_remain--;
         if (owner[current_select_row, current_select_col] == whosturn)//Earth Defense
         {
             defense_type[current_select_row, current_select_col] = type.Earth;
             defense[current_select_row, current_select_col]++;
-            player_resource[whosturn, 2] -= 10;
+            player_resource[whosturn, 2] -= 5;
         }
         else //Earth attack
         {
             defense[current_select_row, current_select_col]--;
-            player_resource[whosturn, 2] -= 10;
+            player_resource[whosturn, 2] -= 5;
             if (defense[current_select_row, current_select_col] == 0)
             {
-                defense_type[current_select_row, current_select_col] = type.Empty;
+                defense_type[current_select_row, current_select_col] = type.Empty;            
+            }
+            if (defense[current_select_row, current_select_col] < 0)
+            {
+                defense[current_select_row, current_select_col] = 0;
+                owner[current_select_row, current_select_col] = whosturn;
             }
         }
+    }
+    int type2int(type input_type)
+    {
+        switch (input_type)
+        {
+            case type.Fire:
+                return 0;
+            case type.Water:
+                return 1;
+            case type.Earth:
+                return 2;
+        }
+        return -1;
     }
 }
