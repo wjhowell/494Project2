@@ -1,10 +1,10 @@
 fileFormatVersion: 2
 guid: 24622f59e27523142ba44e68ea930915
-timeCreated: 1454972685
+timeCreated: 1454978780
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: empty_nobody
+    21300000: boobs
     21300002: earth_nobody
     21300004: fire_nobody
     21300006: water_nobody
@@ -24,6 +24,7 @@ TextureImporter:
     21300034: water_1
     21300036: water_2
     21300038: water_3
+    21300040: empty_nobody_2
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -70,7 +71,7 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: empty_nobody
+    - name: empty_nobody_2
       rect:
         serializedVersion: 2
         x: 0
